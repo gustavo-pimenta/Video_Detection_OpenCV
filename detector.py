@@ -1,5 +1,18 @@
 import cv2
 
+font = cv2.FONT_HERSHEY_SIMPLEX
+bottomLeftCornerOfText = (10,500)
+fontScale = 1
+fontColor = (255,255,255)
+lineType = 2
+
+# cv2.putText(img,'Hello World!', 
+#     bottomLeftCornerOfText, 
+#     font, 
+#     fontScale,
+#     fontColor,
+#     lineType)
+
 # Load the cascade for database
 front_face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
@@ -16,8 +29,8 @@ while True:
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     # Detect the faces
-    faces = front_face_cascade.detectMultiScale(gray, 1.3, 5)
-    eyes = eye_cascade.detectMultiScale(gray, 1.3, 2)
+    faces = front_face_cascade.detectMultiScale(gray, 1.1, 5)
+    eyes = eye_cascade.detectMultiScale(gray, 1.7, 2)
     cat_faces = cat_face_cascade.detectMultiScale(gray, 1.3, 3)
 
     # Draw the rectangle around each face

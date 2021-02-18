@@ -1,6 +1,6 @@
 #########################################################################################
-#   Name: Unicorn Mazer                                                                 #
-#   Version : 8.0                                                                       #
+#   Name: Video Detection with OpenCV                                                   #
+#   Version : 1.0                                                                       #
 #                                                                                       #
 #   Made by: Gustavo Pimenta - Computer Engineering / Game Developer / Python Coder     #
 #            gustavopimenta.gp@gmail.com                                                #

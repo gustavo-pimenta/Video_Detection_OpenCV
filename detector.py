@@ -25,10 +25,11 @@ EYES = True
 CAT_FACES = False
 BODY = False
 
-class video_input():
+# class to recieve and update the video input
+class video_input(): 
 
     def __init__(self): 
-        # Capture video from webcam
+        # capture video from webcam
         self.video = cv2.VideoCapture(0)
 
     def update(self):
@@ -93,13 +94,13 @@ def cascade_detect():
             cv2.rectangle(out_image, (x, y), (x+w, y+h), (0, 0, 255), 2)
 
 
-video = video_input()
+video = video_input() # capture video from webcam
 
 while True:
     video.update()
     cascade_detect()
 
-    # Display
+    # display the image on screen
     cv2.imshow('video detection by gustavo pimenta', out_image)
 
     # Stop if ESC is pressed

@@ -108,5 +108,5 @@ while True:
     if k==27:
         break
         
-# Release the VideoCapture object
+# release the video capture object
 video.release()

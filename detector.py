@@ -17,20 +17,15 @@ eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 cat_face_cascade = cv2.CascadeClassifier('haarcascade_frontalcatface_extended.xml')
 body_cascade = cv2.CascadeClassifier('haarcascade_fullbody.xml')
 
-color_image = 0 # initial var for colored image frame
-gray_image = 0 # initial var for grayscale image frame
-out_image = 0 # initial var for the image that will be showed to user
-
 # control what will be detected by the cascade system
 FACES = True
 EYES = False
 CAT_FACES = False
 BODY = False
 
-# control what will be detected by colors
+# informations to the skin color detector
 ROI = True # define if the region of interest will be used 
-lower_skin = np.array([0,20,70], dtype=np.uint8) # define lower skin color
-# lower_skin = np.array([0, 48, 80], dtype=np.uint8) # define lower skin color
+lower_skin = np.array([0,20,70], dtype=np.uint8) # define lower skin color (also can use [0, 48, 80])
 upper_skin = np.array([20,255,255], dtype=np.uint8) # define upper skin color
 
 # class to recieve and update the video input
@@ -212,5 +207,5 @@ while True:
         break
         
 # release the video capture object
-video.release()
+video.video.release()
 cv2.destroyAllWindows()

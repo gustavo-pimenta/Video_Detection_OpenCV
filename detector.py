@@ -56,7 +56,7 @@ class video_input():
         global lower_skin, upper_skin
 
         # define the region of interest
-        cv2.rectangle(self.frame, (100, 100), (300, 300), (0, 255, 0), 0)
+        cv2.rectangle(self.frame, (100, 100), (300, 300), (0, 255, ), 2)
         roi_image = self.frame[100:300, 100:300]
         
         # apply gaussian blur on the ROI
@@ -83,17 +83,17 @@ class video_input():
         contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         
         try:
-            # Find contour with maximum area
+            # find the max area of the contour
             contour = max(contours, key=lambda x: cv2.contourArea(x))
 
-            # Create bounding rectangle around the contour
+            # draw a rectangle around the contour
             x, y, w, h = cv2.boundingRect(contour)
             cv2.rectangle(roi_image, (x, y), (x + w, y + h), (0, 0, 255), 0)
 
-            # Find convex hull
+            # find convex hull
             hull = cv2.convexHull(contour)
 
-            # Draw contour
+            # draw the contour
             drawing = np.zeros(roi_image.shape, np.uint8)
             
             cv2.drawContours(drawing, [contour], -1, (0, 255, 0), 0)
@@ -102,9 +102,6 @@ class video_input():
             # Find convexity defects
             hull = cv2.convexHull(contour, returnPoints=False)
             defects = cv2.convexityDefects(contour, hull)
-
-            # Use cosine rule to find angle of the far point from the start and end point i.e. the convex points (the finger
-            # tips) for all defects
             count_defects = 0
 
             for i in range(defects.shape[0]):
@@ -118,7 +115,7 @@ class video_input():
                 c = math.sqrt((end[0] - far[0]) ** 2 + (end[1] - far[1]) ** 2)
                 angle = (math.acos((b ** 2 + c ** 2 - a ** 2) / (2 * b * c)) * 180) / 3.14
 
-                # if angle > 90 draw a circle at the far point
+                # if the angle > 90 draw a circle at the far point
                 if angle <= 90:
                     count_defects += 1
                     cv2.circle(roi_image, far, 1, [0, 0, 255], -1)
@@ -209,10 +206,7 @@ while True:
 
     video.show_images()
 
-    # # display the image on screen
-    # cv2.imshow('video detection by gustavo pimenta', out_image)
-
-    # Stop if ESC is pressed
+    # break when ESC is pressed
     k = cv2.waitKey(30) & 0xff
     if k==27:
         break

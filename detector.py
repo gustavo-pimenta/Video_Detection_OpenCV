@@ -18,7 +18,7 @@ cat_face_cascade = cv2.CascadeClassifier('haarcascade_frontalcatface_extended.xm
 body_cascade = cv2.CascadeClassifier('haarcascade_fullbody.xml')
 
 # control what will be detected by the cascade system
-FACES = True
+FACES = False
 EYES = False
 CAT_FACES = False
 BODY = False
@@ -89,12 +89,11 @@ class video_input():
             hull = cv2.convexHull(contour)
 
             # draw the contour
-            drawing = np.zeros(roi_image.shape, np.uint8)
-            
-            cv2.drawContours(drawing, [contour], -1, (0, 255, 0), 0)
-            cv2.drawContours(drawing, [hull], -1, (0, 0, 255), 0)
+            contour_draw = np.zeros(roi_image.shape, np.uint8)
+            cv2.drawContours(contour_draw, [contour], -1, (0, 255, 0), 0)
+            cv2.drawContours(contour_draw, [hull], -1, (0, 0, 255), 0)
 
-            # Find convexity defects
+            # search for convexity defects
             hull = cv2.convexHull(contour, returnPoints=False)
             defects = cv2.convexityDefects(contour, hull)
             count_defects = 0
@@ -110,13 +109,16 @@ class video_input():
                 c = math.sqrt((end[0] - far[0]) ** 2 + (end[1] - far[1]) ** 2)
                 angle = (math.acos((b ** 2 + c ** 2 - a ** 2) / (2 * b * c)) * 180) / 3.14
 
-                # if the angle > 90 draw a circle at the far point
+                # draw the green line contour
+                cv2.line(roi_image, start, end, [0, 255, 0], 2) 
+
+                # if the angle > 90 draw the circles in the start, far, and end of defect
                 if angle <= 90:
                     count_defects += 1
                     cv2.circle(roi_image, far, 1, [0, 0, 255], -1)
+                    cv2.circle(roi_image, start, 3, [255, 0, 0], -1)
+                    cv2.circle(roi_image, end, 3, [255, 0, 0], -1)
 
-                cv2.line(roi_image, start, end, [0, 255, 0], 2)
-        
             # save the number of fingers
             if count_defects == 0:
                 self.fingers = 1
@@ -132,10 +134,13 @@ class video_input():
 
             # create and save images to be showed 
             self.frame = self.frame
-            self.roi_image = np.hstack((drawing, roi_image))
+            self.roi_image = np.hstack((contour_draw, roi_image))
+            self.hand_draw = contour_draw
             self.roi_blackwhite = thresh
 
-        except: print('DETECT FINGERS ERROR')
+        except: 
+            print('NO HAND DETECTED')
+            self.fingers = 0
         
     def show_images(self):
         try:
@@ -191,6 +196,13 @@ class video_input():
             for (x, y, w, h) in bodys:
                 cv2.rectangle(self.frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
 
+def gesture_reconize():
+    fingers = video.fingers
+    hand_draw = video.hand_draw
+    print(fingers)
+    
+
+
 video = video_input() # capture video from webcam
 
 while True:
@@ -200,6 +212,8 @@ while True:
     if ROI==True: video.hand_detector()
 
     video.show_images()
+
+    gesture_reconize()
 
     # break when ESC is pressed
     k = cv2.waitKey(30) & 0xff

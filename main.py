@@ -38,7 +38,9 @@ class MainApp(MDApp):
     def controller(self, *args): # controll the functions in use 
 
         self.video_capture.update()
+        self.video_capture.barrel_distortion()
         self.video_capture.duplicate_image()
+        
         
         self.image_on_screen()
     
@@ -69,6 +71,34 @@ class VideoCapture():
     
     def duplicate_image(self): # make a duplicate side by side version of an image
         self.frame = np.hstack((self.frame, self.frame))
+
+    def barrel_distortion(self): 
+
+        width  = self.frame.shape[1]
+        height = self.frame.shape[0]
+
+        distCoeff = np.zeros((4,1),np.float64)
+
+        k1 = +1.0e-4; # barrel distortion coefficient: positive to apply and negative to remove  barrel distortion
+        k2 = 0; 
+        p1 = 0; # vertical tilt distortion: positive up and negative down
+        p2 = 0; # horizontal tilt distortion: positive left and negative right
+
+        distCoeff[0,0] = k1;
+        distCoeff[1,0] = k2;
+        distCoeff[2,0] = p1;
+        distCoeff[3,0] = p2;
+
+        # assume unit matrix for camera
+        cam = np.eye(3,dtype=np.float32)
+
+        cam[0,2] = width/2.0  # define center x
+        cam[1,2] = height/2.0 # define center y
+        cam[0,0] = 10.        # define focal length x
+        cam[1,1] = 10.        # define focal length y
+
+        # here the undistortion will be computed
+        self.frame = cv2.undistort(self.frame,cam,distCoeff)
     
     
         
